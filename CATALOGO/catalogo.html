@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JOHNTECH - Catálogo Oficial</title>
+    <style>
+        /* Antony Hernandez - 20232100056 - Programacion Intermedia - DIA065-0800 */
+        :root {
+            --azul-johntech: #0046ad;
+            --blanco: #ffffff;
+            --whatsapp-green: #25d366;
+            --gris-texto: #555;
+            --dorado: #ffd700;
+            --gris-claro: #f3f4f6;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--azul-johntech);
+            color: var(--blanco);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- ANIMACIONES --- */
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes pulse-cart {
+            0% { transform: translateY(-50%) scale(1); }
+            50% { transform: translateY(-50%) scale(1.2); background-color: var(--dorado); }
+            100% { transform: translateY(-50%) scale(1); }
+        }
+
+        .fade-in { animation: fadeInScale 0.5s ease-out forwards; }
+        .pulse { animation: pulse-cart 0.4s ease-in-out; }
+
+        /* --- LOGIN OVERLAY --- */
+        #auth-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--azul-johntech);
+            z-index: 3000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .auth-container {
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 420px;
+            color: #333;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+        }
+
+        .auth-logo {
+            width: 100%;
+            max-width: 280px; 
+            height: auto;
+            margin-bottom: 25px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--gris-claro);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: bold;
+            color: #888;
+            transition: 0.3s;
+        }
+
+        .tab-btn.active {
+            color: var(--azul-johntech);
+            border-bottom: 3px solid var(--azul-johntech);
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 14px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        .btn-auth {
+            background: var(--azul-johntech);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 1rem;
+        }
+
+        .btn-guest-premium {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: var(--azul-johntech);
+            border: 2px solid var(--azul-johntech);
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 70, 173, 0.15);
+        }
+
+        .btn-guest-premium:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(135deg, var(--azul-johntech) 0%, #003380 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 70, 173, 0.3);
+        }
+
+        .auth-toggle {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: var(--azul-johntech);
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .hidden { display: none; }
+
+        header { text-align: center; padding: 2vh 20px; background: rgba(0, 0, 0, 0.1); flex-shrink: 0; position: relative; }
+        .logo-container img { height: 10vh; width: auto; filter: drop-shadow(0px 4px 10px rgba(0,0,0,0.3)); }
+        .lema-dorado { color: var(--dorado); font-weight: bold; font-size: 0.9rem; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+        .cart-counter { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: white; color: var(--azul-johntech); padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; transition: all 0.3s ease; }
+        .admin-badge { background: var(--dorado); color: #333; padding: 2px 8px; border-radius: 5px; font-size: 0.7rem; font-weight: bold; margin-left: 10px; display: none; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; flex: 1; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+        .catalog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+        .product-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 15px; padding: 20px; text-align: center; transition: transform 0.3s, background 0.3s; cursor: pointer; }
+        .product-card:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.2); }
+        .sub-catalog { display: none; height: 70vh; overflow-y: auto; padding: 10px; }
+        .item-card { background: white; color: #333; border-radius: 12px; margin-bottom: 20px; display: flex; flex-wrap: wrap; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.3); position: relative; }
+        .item-image { flex: 1 1 300px; max-height: 300px; overflow: hidden; background-color: #f9f9f9; display: flex; align-items: center; justify-content: center; }
+        .item-image img { width: 100%; height: 100%; object-fit: contain; }
+        .item-info { flex: 1 1 300px; padding: 25px; display: flex; flex-direction: column; justify-content: center; }
+        .item-info h4 { color: var(--azul-johntech); margin: 0 0 10px 0; font-size: 1.5rem; }
+        .price-tag { color: #d32f2f; font-weight: bold; font-size: 1.4rem; margin-bottom: 15px; }
+        .btn-add-cart { background: var(--azul-johntech); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 15px; }
+        .btn-back { background: white; color: var(--azul-johntech); border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; margin-bottom: 20px; font-weight: bold; }
+        .whatsapp-float { position: fixed; bottom: 40px; right: 40px; background-color: var(--whatsapp-green); color: #FFF; border-radius: 50px; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; z-index: 100; box-shadow: 2px 2px 10px rgba(0,0,0,0.3); }
+        footer { text-align: center; padding: 2vh 20px; font-size: 0.8rem; opacity: 0.7; background: rgba(0, 0, 0, 0.05); }
+
+        .modal-resumen, .modal-admin {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;
+        }
+        .modal-container { background: white; color: #333; width: 90%; max-width: 450px; border-radius: 15px; padding: 20px; overflow-y: auto; max-height: 90vh; }
+        .btn-confirmar { background: var(--whatsapp-green); color: white; border: none; width: 100%; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        .btn-admin-action { background: var(--dorado); border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-top: 5px; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+<div id="auth-overlay">
+    <div class="auth-container fade-in">
+        <img src="BLANCO FONDO.png" alt="John Tech" class="auth-logo">
+        <div class="auth-tabs">
+            <button class="tab-btn active" id="tab-user" onclick="switchAuthTab('user')">CLIENTES</button>
+            <button class="tab-btn" id="tab-admin" onclick="switchAuthTab('admin')">ADMIN</button>
+        </div>
+        <div id="section-user">
+            <h2 id="auth-title" style="color: var(--azul-johntech); margin: 0 0 10px 0; font-size: 1.2rem;">Bienvenido</h2>
+            <input type="text" id="user-input" class="auth-input" placeholder="Usuario o Correo">
+            <input type="password" id="pass-input" class="auth-input" placeholder="Contraseña">
+            <button class="btn-auth" onclick="handleAuth()">Ingresar al Catálogo</button>
+            <div class="auth-toggle" onclick="toggleAuthMode()" id="auth-toggle-text">¿Eres nuevo? Crea una cuenta aquí</div>
+            <button class="btn-guest-premium" onclick="handleGuestAccess()"><span>🔓</span> INGRESAR COMO VISITANTE</button>
+        </div>
+        <div id="section-admin" class="hidden">
+            <h2 style="color: #d32f2f; margin: 0 0 10px 0; font-size: 1.2rem;">Acceso Restringido</h2>
+            <input type="text" id="admin-user-field" class="auth-input" placeholder="ID de Administrador">
+            <input type="password" id="admin-pass-field" class="auth-input" placeholder="Código PIN">
+            <button class="btn-auth" style="background: #d32f2f;" onclick="handleAdminAuth()">Verificar Identidad</button>
+        </div>
+    </div>
+</div>
+
+<header>
+    <div class="logo-container"><img src="AZUL FONDO.png" alt="John Tech"></div>
+    <div class="lema-dorado">RECUERDA QUE NO ES UN GASTO ES UNA INVERSIÓN <span id="admin-tag" class="admin-badge">MODO ADMINISTRADOR</span></div>
+    <div class="cart-counter" id="cart-display" onclick="mostrarResumen()">🛒 Carrito: 0</div>
+    <button onclick="logout()" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); background: none; border: 1px solid white; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.7rem;">Cerrar Sesión</button>
+</header>
+
+<div class="container">
+    <div id="main-view" class="fade-in">
+        <div id="categories-grid" class="catalog-grid"></div>
+        <button id="btn-add-category" class="btn-auth" style="background: var(--dorado); color: black; margin-top: 20px; display: none;" onclick="abrirModalCategoria()">+ Agregar Nueva Área</button>
+        <button id="btn-view-users" class="btn-auth" style="background: #555; margin-top: 10px; display: none;" onclick="verUsuarios()">Ver Usuarios Registrados</button>
+    </div>
+    <div id="catalog-view" class="sub-catalog">
+        <button class="btn-back" onclick="showMain()">← Volver al Menú</button>
+        <button id="btn-admin-add-item" class="btn-auth" style="background: var(--dorado); color: black; margin-bottom: 20px; display: none;" onclick="abrirModalProducto()">+ Agregar Producto a esta Área</button>
+        <div id="item-list"></div>
+    </div>
+    <a href="https://wa.me/50497914995" class="whatsapp-float" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="35" alt="WhatsApp"></a>
+</div>
+
+<div id="modal-admin-prod" class="modal-admin">
+    <div class="modal-container">
+        <h3 id="modal-prod-title">Gestionar Producto</h3>
+        <input type="text" id="prod-nombre" class="auth-input" placeholder="Nombre del Producto">
+        <input type="number" id="prod-precio" class="auth-input" placeholder="Precio (L.)">
+        <input type="text" id="prod-img" class="auth-input" placeholder="Nombre de imagen (ej: dell.jpg)">
+        <input type="text" id="prod-specs" class="auth-input" placeholder="Especificaciones">
+        <button class="btn-confirmar" onclick="guardarProducto()">Guardar Cambios</button>
+        <button class="btn-auth" style="background:#eee; color:#333; margin-top:5px;" onclick="cerrarModales()">Cancelar</button>
+    </div>
+</div>
+
+<div id="modal-admin-cat" class="modal-admin">
+    <div class="modal-container">
+        <h3>Nueva Área de Catálogo</h3>
+        <input type="text" id="cat-id" class="auth-input" placeholder="ID (ej: portatiles)">
+        <input type="text" id="cat-nombre" class="auth-input" placeholder="Nombre (ej: Portátiles)">
+        <input type="text" id="cat-icon" class="auth-input" placeholder="Emoji (ej: 💻)">
+        <button class="btn-confirmar" onclick="guardarCategoria()">Crear Área</button>
+        <button class="btn-auth" style="background:#eee; color:#333; margin-top:5px;" onclick="cerrarModales()">Cancelar</button>
+    </div>
+</div>
+
+<div id="modal-resumen" class="modal-resumen">
+    <div class="modal-container">
+        <h3 id="resumen-titulo">Resumen</h3>
+        <div id="lista-resumen" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px;"></div>
+        <div id="controles-carrito">
+            <div style="border-top: 2px solid #eee; padding-top: 10px; font-weight: bold; display: flex; justify-content: space-between; font-size: 1.2rem;">
+                <span>TOTAL:</span><span id="total-carrito">L. 0.00</span>
+            </div>
+            <button class="btn-confirmar" onclick="enviarWhatsApp()">Enviar Pedido por WhatsApp</button>
+            <button onclick="vaciarCarrito()" style="width:100%; border:1px solid #d32f2f; color:#d32f2f; background:none; padding:10px; border-radius:8px; margin-top:10px; cursor:pointer; font-weight:bold;">Vaciar Carrito</button>
+        </div>
+        <button style="width:100%; border:none; padding:10px; margin-top:5px; cursor:pointer; background:#eee; border-radius:8px;" onclick="cerrarModales()">Cerrar</button>
+    </div>
+</div>
+
+<footer><p>&copy; 2026 JOHNTECH - San Pedro Sula, Honduras</p></footer>
+
+<script>
+    /* Antony Hernandez - 20232100056 - Programacion Intermedia - DIA065-0800 */
+    let carrito = [];
+    let isLoginMode = true;
+    let currentCategory = '';
+    let editingId = null;
+
+    let catalogData = JSON.parse(localStorage.getItem('johntech_inventory')) || {
+        portatiles: [{ id:101, nombre: "DELL LATITUDE 7490", precio: 11990.00, img: "dell7490.jpg", specs: "i5, 8GB RAM, 256GB SSD" }],
+        perifericos: [{ id:301, nombre: "Apple Pencil USB-C", precio: 3999.00, img: "PENCIL.png", specs: "iPad 10-11 gen" }],
+        soporte: [{ id:401, nombre: "Mantenimiento", precio: 500.00, img: "mantemiento.png", specs: "Limpieza profunda" }]
+    };
+
+    let categories = JSON.parse(localStorage.getItem('johntech_categories')) || [
+        { id: 'portatiles', nombre: 'Portátiles', icon: '💻' },
+        { id: 'perifericos', nombre: 'Periféricos', icon: '🖱️' },
+        { id: 'soporte', nombre: 'Soporte', icon: '🛠️' }
+    ];
+
+    function renderCategories() {
+        const grid = document.getElementById('categories-grid');
+        grid.innerHTML = "";
+        const isAdmin = sessionStorage.getItem('is_admin') === 'true';
+        categories.forEach(cat => {
+            grid.innerHTML += `
+                <div class="product-card" onclick="showCatalog('${cat.id}')">
+                    <div style="font-size: 3rem; margin-bottom: 10px;">${cat.icon}</div>
+                    <h3>${cat.nombre}</h3>
+                    ${isAdmin ? `<button class="btn-admin-action" style="background:#d32f2f; color:white;" onclick="event.stopPropagation(); eliminarCategoria('${cat.id}')">Eliminar Área</button>` : ''}
+                </div>`;
+        });
+    }
+
+    function switchAuthTab(tab) {
+        document.getElementById('section-user').classList.toggle('hidden', tab === 'admin');
+        document.getElementById('section-admin').classList.toggle('hidden', tab === 'user');
+        document.getElementById('tab-user').classList.toggle('active', tab === 'user');
+        document.getElementById('tab-admin').classList.toggle('active', tab === 'admin');
+    }
+
+    function toggleAuthMode() {
+        isLoginMode = !isLoginMode;
+        document.getElementById('auth-title').innerText = isLoginMode ? "Bienvenido" : "Registro de Usuario";
+    }
+
+    function handleAuth() {
+        const user = document.getElementById('user-input').value;
+        if(user) { 
+            let users = JSON.parse(localStorage.getItem('johntech_users')) || [];
+            if(!isLoginMode) {
+                users.push(user);
+                localStorage.setItem('johntech_users', JSON.stringify(users));
+            }
+            sessionStorage.setItem('active_session', user); 
+            document.getElementById('auth-overlay').style.display = 'none'; 
+        }
+    }
+
+    function handleGuestAccess() {
+        sessionStorage.setItem('active_session', "Visitante");
+        document.getElementById('auth-overlay').style.display = 'none';
+    }
+
+    function handleAdminAuth() {
+        const user = document.getElementById('admin-user-field').value;
+        const pass = document.getElementById('admin-pass-field').value;
+        if (user === "JOHNTECH" && pass === "admin123") {
+            sessionStorage.setItem('active_session', user); sessionStorage.setItem('is_admin', 'true');
+            location.reload();
+        } else alert("Acceso Denegado");
+    }
+
+    function logout() { sessionStorage.clear(); location.reload(); }
+
+    function showCatalog(category) {
+        currentCategory = category;
+        document.getElementById('main-view').style.display = 'none';
+        document.getElementById('catalog-view').style.display = 'block';
+        renderItems();
+    }
+
+    function renderItems() {
+        const list = document.getElementById('item-list'); list.innerHTML = "";
+        const isAdmin = sessionStorage.getItem('is_admin') === 'true';
+        if(!catalogData[currentCategory]) catalogData[currentCategory] = [];
+        
+        catalogData[currentCategory].forEach(p => {
+            list.innerHTML += `<div class="item-card fade-in">
+                <div class="item-image"><img src="${p.img}" onerror="this.src='https://via.placeholder.com/150'"></div>
+                <div class="item-info">
+                    <h4>${p.nombre}</h4><span class="price-tag">L. ${p.precio}</span><p>${p.specs}</p>
+                    ${!isAdmin ? `<button class="btn-add-cart" onclick="agregarAlCarrito(${p.id}, '${p.nombre}', ${p.precio})">Añadir al Carrito</button>` : 
+                    `<div>
+                        <button class="btn-admin-action" onclick="editarProducto(${p.id})">Modificar</button>
+                        <button class="btn-admin-action" style="background:#d32f2f; color:white;" onclick="eliminarProducto(${p.id})">Eliminar</button>
+                    </div>`}
+                </div></div>`;
+        });
+    }
+
+    /* FUNCIONES CRUD ADMIN */
+    function abrirModalCategoria() { document.getElementById('modal-admin-cat').style.display = 'flex'; }
+    function guardarCategoria() {
+        const id = document.getElementById('cat-id').value;
+        const nombre = document.getElementById('cat-nombre').value;
+        const icon = document.getElementById('cat-icon').value;
+        if(id && nombre) {
+            categories.push({id, nombre, icon});
+            catalogData[id] = [];
+            localStorage.setItem('johntech_categories', JSON.stringify(categories));
+            localStorage.setItem('johntech_inventory', JSON.stringify(catalogData));
+            location.reload();
+        }
+    }
+    function eliminarCategoria(id) {
+        if(confirm("¿Eliminar toda esta área y sus productos?")) {
+            categories = categories.filter(c => c.id !== id);
+            delete catalogData[id];
+            localStorage.setItem('johntech_categories', JSON.stringify(categories));
+            localStorage.setItem('johntech_inventory', JSON.stringify(catalogData));
+            renderCategories();
+        }
+    }
+
+    function abrirModalProducto() { 
+        editingId = null;
+        document.getElementById('modal-prod-title').innerText = "Nuevo Producto";
+        document.getElementById('prod-nombre').value = "";
+        document.getElementById('modal-admin-prod').style.display = 'flex'; 
+    }
+
+    function editarProducto(id) {
+        const p = catalogData[currentCategory].find(i => i.id === id);
+        editingId = id;
+        document.getElementById('modal-prod-title').innerText = "Editar Producto";
+        document.getElementById('prod-nombre').value = p.nombre;
+        document.getElementById('prod-precio').value = p.precio;
+        document.getElementById('prod-img').value = p.img;
+        document.getElementById('prod-specs').value = p.specs;
+        document.getElementById('modal-admin-prod').style.display = 'flex';
+    }
+
+    function guardarProducto() {
+        const nombre = document.getElementById('prod-nombre').value;
+        const precio = parseFloat(document.getElementById('prod-precio').value);
+        const img = document.getElementById('prod-img').value;
+        const specs = document.getElementById('prod-specs').value;
+
+        if(editingId) {
+            const index = catalogData[currentCategory].findIndex(i => i.id === editingId);
+            catalogData[currentCategory][index] = { id: editingId, nombre, precio, img, specs };
+        } else {
+            const newId = Date.now();
+            catalogData[currentCategory].push({ id: newId, nombre, precio, img, specs });
+        }
+        localStorage.setItem('johntech_inventory', JSON.stringify(catalogData));
+        cerrarModales();
+        renderItems();
+    }
+
+    function eliminarProducto(id) {
+        if(confirm("¿Eliminar producto?")) {
+            catalogData[currentCategory] = catalogData[currentCategory].filter(i => i.id !== id);
+            localStorage.setItem('johntech_inventory', JSON.stringify(catalogData));
+            renderItems();
+        }
+    }
+
+    function verUsuarios() {
+        const users = JSON.parse(localStorage.getItem('johntech_users')) || ["No hay usuarios"];
+        alert("Usuarios Registrados:\n" + users.join("\n"));
+    }
+
+    /* LOGICA CARRITO */
+    function agregarAlCarrito(id, nombre, precio) {
+        if(sessionStorage.getItem('active_session') === "Visitante") return alert("Regístrate para comprar");
+        const item = carrito.find(p => p.id === id);
+        if(item) item.cantidad++; else carrito.push({ id, nombre, precio, cantidad: 1 });
+        actualizarContador(true);
+    }
+
+    function actualizarContador(animar) {
+        const display = document.getElementById('cart-display');
+        const total = carrito.reduce((acc, p) => acc + p.cantidad, 0);
+        display.innerText = `🛒 Carrito: ${total}`;
+        if(animar) { display.classList.add('pulse'); setTimeout(() => display.classList.remove('pulse'), 400); }
+    }
+
+    function mostrarResumen() {
+        const lista = document.getElementById('lista-resumen');
+        lista.innerHTML = "";
+        if(carrito.length === 0) {
+            lista.innerHTML = "<p>Vacío</p>";
+            document.getElementById('controles-carrito').style.display = "none";
+        } else {
+            document.getElementById('controles-carrito').style.display = "block";
+            let total = 0;
+            carrito.forEach(p => {
+                total += (p.precio * p.cantidad);
+                lista.innerHTML += `<p>${p.cantidad}x ${p.nombre} - L. ${p.precio*p.cantidad}</p>`;
+            });
+            document.getElementById('total-carrito').innerText = `L. ${total.toLocaleString()}`;
+        }
+        document.getElementById('modal-resumen').style.display = 'flex';
+    }
+
+    function vaciarCarrito() { carrito = []; actualizarContador(false); mostrarResumen(); }
+    function cerrarModales() { 
+        document.querySelectorAll('.modal-resumen, .modal-admin').forEach(m => m.style.display = 'none'); 
+    }
+    function showMain() { 
+        document.getElementById('main-view').style.display='block'; 
+        document.getElementById('catalog-view').style.display='none'; 
+        renderCategories();
+    }
+
+    function enviarWhatsApp() {
+        let texto = "Pedido:%0A";
+        carrito.forEach(p => texto += `- ${p.cantidad}x ${p.nombre}%0A`);
+        window.open(`https://wa.me/50497914995?text=${texto}`, '_blank');
+    }
+
+    window.onload = () => {
+        renderCategories();
+        if(sessionStorage.getItem('active_session')) {
+            document.getElementById('auth-overlay').style.display = 'none';
+            if(sessionStorage.getItem('is_admin') === 'true') {
+                document.getElementById('admin-tag').style.display = 'inline-block';
+                document.getElementById('btn-add-category').style.display = 'block';
+                document.getElementById('btn-view-users').style.display = 'block';
+                document.getElementById('btn-admin-add-item').style.display = 'block';
+            }
+        }
+    }
+</script>
+</body>
+</html>
